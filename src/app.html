@@ -1,0 +1,550 @@
+<title>Philly on Foot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/*FONTS*/
+:root{
+  --bg:#E8EAE4; --surface:#FBFBF8; --surface2:#F1F2ED; --ink:#141A17; --ink2:#3F4944; --muted:#6C756F; --line:#CCD2C9; --line2:#DEE2DA;
+  --accent:#0B4F52; --accent-ink:#FFFFFF; --pop:#F26B3A; --pop-ink:#1B1B1B; --water:#BFCFD6; --park:#D6DEC9;
+  --brick:#A63D2F; --ochre:#B7862B; --slate:#5C6670; --plum:#6E4C8B; --blue:#2F6F9F;
+  --h0:#D8DCCB; --h1:#E2D9C4; --h2:#D3DBDD; --h3:#E5D6CB; --h4:#D5DFD0; --h5:#DFD6DA; --h6:#D2DDD6; --h7:#E4DBC7; --h8:#D9D9E1; --h9:#DCE0CE;
+  --shadow:0 1px 2px rgba(20,26,23,.06),0 8px 24px rgba(20,26,23,.08);
+  --serif:'DM Serif Display',Georgia,'Times New Roman',serif; --sans:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'Geist Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1412; --surface:#171D1A; --surface2:#1E2521; --ink:#EDEFEA; --ink2:#C4CBC5; --muted:#8B958E; --line:#2C3530; --line2:#242C28;
+  --accent:#7FC6BE; --accent-ink:#0F1412; --pop:#FF8A5B; --pop-ink:#0F1412; --water:#1F2E36; --park:#1B2A22;
+  --brick:#E07B6A; --ochre:#D9AE5B; --slate:#98A4AE; --plum:#B79BD1; --blue:#7FB2DA;
+  --h0:#1E2620; --h1:#262319; --h2:#1B2528; --h3:#28211D; --h4:#1C261E; --h5:#26202A; --h6:#1A2622; --h7:#282418; --h8:#20212B; --h9:#22271C;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.4);
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1412; --surface:#171D1A; --surface2:#1E2521; --ink:#EDEFEA; --ink2:#C4CBC5; --muted:#8B958E; --line:#2C3530; --line2:#242C28;
+  --accent:#7FC6BE; --accent-ink:#0F1412; --pop:#FF8A5B; --pop-ink:#0F1412; --water:#1F2E36; --park:#1B2A22;
+  --brick:#E07B6A; --ochre:#D9AE5B; --slate:#98A4AE; --plum:#B79BD1; --blue:#7FB2DA;
+  --h0:#1E2620; --h1:#262319; --h2:#1B2528; --h3:#28211D; --h4:#1C261E; --h5:#26202A; --h6:#1A2622; --h7:#282418; --h8:#20212B; --h9:#22271C;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:var(--accent)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--pop);outline-offset:2px}
+h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}
+.serif{font-family:var(--serif)}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+
+/* ---------- header ---------- */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1400px;margin:0 auto;padding:12px 20px 0;display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 28px}
+.brand{display:flex;align-items:baseline;gap:14px;padding-bottom:10px}
+.brand h1{font-family:var(--serif);font-size:30px;line-height:1;letter-spacing:-.01em}
+.brand h1 em{color:var(--pop);font-style:italic}
+.brand .sub{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+nav.tabs{display:flex;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{padding:10px 14px 12px;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;margin-bottom:-1px}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button.on{color:var(--ink);border-bottom-color:var(--pop)}
+.wrap{max-width:1400px;margin:0 auto;padding:18px 20px 60px}
+.view{display:none}.view.on{display:block}
+
+/* ---------- filters ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:14px}
+.fgroup{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fgroup .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:13px;color:var(--ink2);background:var(--surface);display:inline-flex;align-items:center;gap:6px;transition:background .15s,color .15s,border-color .15s}
+.chip:hover{border-color:var(--ink2)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--c,var(--accent))}
+.chip.on .dot{outline:2px solid var(--bg)}
+select.sel{font:inherit;font-size:13px;color:var(--ink2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.count{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;margin-left:auto}
+
+/* ---------- map layout ---------- */
+.maplayout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;align-items:start}
+.maplayout.rev{grid-template-columns:400px minmax(0,1fr)}
+@media (max-width:980px){.maplayout.rev{grid-template-columns:1fr}}
+@media (max-width:980px){.maplayout{grid-template-columns:1fr}}
+.mapcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);position:relative}
+.mapcard svg{display:block;width:100%;height:auto;max-height:82vh;background:var(--surface)}
+.map-legend{position:absolute;left:12px;bottom:12px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:11px;color:var(--ink2);display:grid;grid-template-columns:auto auto;gap:3px 14px;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;pointer-events:none}
+.map-legend span{display:inline-flex;align-items:center;gap:6px}
+.map-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.map-legend i.pop{background:var(--pop)}.map-legend i.blue{background:var(--blue)}.map-legend i.home{background:var(--ink);border-radius:2px;transform:rotate(45deg)}
+.map-hint{position:absolute;right:12px;top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:8px;padding:5px 8px;pointer-events:none}
+.tooltip{position:fixed;z-index:50;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;border-radius:8px;font-size:12px;line-height:1.35;max-width:240px;display:none;box-shadow:var(--shadow)}
+.tooltip b{font-weight:600}
+.tooltip .m{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+/* svg */
+.hood{fill:var(--hf,var(--h0));stroke:var(--surface);stroke-width:60;cursor:pointer;transition:filter .2s}
+.hood:hover{filter:brightness(.94)}
+:root[data-theme="dark"] .hood:hover{filter:brightness(1.25)}
+.hood.sel{stroke:var(--ink);stroke-width:35;stroke-dasharray:90 60}
+.hoodlbl{--fs:135px;font-family:var(--serif);font-style:italic;fill:var(--ink2);pointer-events:none;text-anchor:middle;opacity:.9}
+.hoodlbl.small{--fs:105px}
+.water{fill:none;stroke:var(--water);stroke-linejoin:round;stroke-linecap:round}
+.street{fill:none;stroke:var(--surface);stroke-width:34;stroke-linecap:round;opacity:.9}
+.street.major{stroke-width:52}
+.streetlbl{--fs:95px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;fill:var(--muted);pointer-events:none}
+.pin{cursor:pointer;transition:opacity .2s}
+.pk{transform:scale(var(--k,1))}
+.hoodlbl,.streetlbl{font-size:calc(var(--fs) * var(--k,1))}
+.route{stroke-width:calc(70 * var(--k,1))}.route-glow{stroke-width:calc(130 * var(--k,1))}
+.hood.sel{stroke-width:calc(35 * var(--k,1))}
+.pin.dim{opacity:.18;pointer-events:none}
+.pin .g{fill:var(--accent);stroke:var(--surface);stroke-width:22}
+.pin.you .g{fill:var(--pop)}.pin.list .g{fill:var(--blue)}
+.pin.sel .g{stroke:var(--ink);stroke-width:30}
+.pin text{font-family:var(--sans);font-size:105px;font-weight:500;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:30;stroke-linejoin:round;pointer-events:none;display:none}
+svg.z1 .pin.p1 text{display:block}
+svg.z2 .pin text{display:block}
+.pin.sel text{display:block}
+.zoomctl{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:4px}
+.zoomctl button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink2);font-size:16px;line-height:1;display:grid;place-items:center}
+.zoomctl button:hover{color:var(--ink);border-color:var(--ink2)}
+.route{fill:none;stroke:var(--pop);stroke-width:70;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:160 90;opacity:.95}
+.route-glow{fill:none;stroke:var(--surface);stroke-width:130;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.home .g{fill:var(--ink);stroke:var(--surface);stroke-width:24}
+.home text{font-family:var(--mono);font-size:100px;letter-spacing:.08em;text-transform:uppercase;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:30}
+
+/* ---------- panel ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:18px 20px;max-height:82vh;overflow:auto;position:sticky;top:78px}
+.panel .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.panel h2{font-family:var(--serif);font-size:28px;line-height:1.05;margin-bottom:4px}
+.panel h2 em{font-style:italic;color:var(--muted)}
+.panel .tag{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--pop);margin-bottom:12px}
+.panel p{margin:0 0 10px;color:var(--ink2)}
+.panel h4{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px;font-weight:500}
+.panel ul{margin:0;padding-left:16px;color:var(--ink2)}
+.panel li{margin-bottom:4px}
+.panel .plist{list-style:none;padding:0}
+.panel .plist li{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-top:1px solid var(--line2);cursor:pointer}
+.panel .plist li:hover .nm{color:var(--pop)}
+.panel .plist .nm{font-weight:500;color:var(--ink)}
+.panel .plist .mn{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.panel .empty{color:var(--muted);font-style:italic}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 10px}
+.b{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:4px;border:1px solid var(--bc,var(--line));color:var(--bc,var(--ink2))}
+.b.you{--bc:var(--pop)}.b.hidden{--bc:var(--accent)}.b.famous{--bc:var(--brick)}.b.classic{--bc:var(--ochre)}.b.dive{--bc:var(--slate)}.b.new{--bc:var(--plum)}.b.list{--bc:var(--blue)}.b.splurge{--bc:var(--ink)}
+.b.p1{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.b.p2{border-style:dashed}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted);margin-bottom:10px}
+.tip{border-left:2px solid var(--pop);padding:6px 10px;background:var(--surface2);border-radius:0 8px 8px 0;font-size:14px;color:var(--ink2);margin-top:8px}
+.tip b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--pop);display:block;margin-bottom:2px}
+.star{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--ink2);display:inline-flex;gap:6px;align-items:center;margin-top:12px}
+.star.on{background:var(--pop);border-color:var(--pop);color:var(--pop-ink)}
+.linkbtn{font-size:12px;color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+
+/* ---------- lists ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;position:relative;transition:transform .15s,border-color .15s}
+.card:hover{border-color:var(--ink2)}
+.card .hd{display:flex;align-items:baseline;gap:8px}
+.card h3{font-family:var(--serif);font-size:21px;line-height:1.1}
+.card .price{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.card .where{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card .where b{color:var(--ink2);font-weight:500}
+.card p{margin:2px 0 0;color:var(--ink2);font-size:14px}
+.card .foot{display:flex;gap:8px;align-items:center;margin-top:6px}
+.card .foot .star{margin:0}
+.card .go{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-left:auto}
+.card.you{border-color:color-mix(in srgb,var(--pop) 55%,var(--line))}
+.section-h{display:flex;align-items:baseline;gap:14px;margin:26px 0 12px}
+.section-h h2{font-family:var(--serif);font-size:26px}
+.section-h .n{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.intro{max-width:70ch;color:var(--ink2);margin:0 0 16px}
+.intro b{color:var(--ink);font-weight:500}
+
+/* ---------- walks ---------- */
+.walklist{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.walk{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;box-shadow:var(--shadow)}
+.walk.on{border-color:var(--pop);background:color-mix(in srgb,var(--pop) 6%,var(--surface))}
+.walk .num{font-family:var(--serif);font-size:26px;color:var(--pop);width:34px;text-align:center}
+.walk h3{font-family:var(--serif);font-size:19px;line-height:1.15}
+.walk .m{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.walk .stat{font-family:var(--mono);font-size:11px;color:var(--ink2);text-align:right;white-space:nowrap;letter-spacing:.04em}
+.walk .stat b{display:block;font-size:16px;font-weight:500;color:var(--ink);font-family:var(--serif)}
+
+/* ---------- calendar ---------- */
+.cal{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.week{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.week h3{font-family:var(--serif);font-size:20px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line2)}
+.week .ev{display:grid;grid-template-columns:64px 1fr;gap:10px;padding:6px 0;border-bottom:1px solid var(--line2);font-size:14px;color:var(--ink2)}
+.week .ev:last-child{border-bottom:0}
+.week .ev .d{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--pop);padding-top:2px}
+.week .ev .t b{color:var(--ink);font-weight:500}
+.fixed{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:0 0 20px}
+.fixed .f{background:var(--surface2);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2)}
+.fixed .f b{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+
+/* ---------- top ---------- */
+.top20{counter-reset:t;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+.top20 .t{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 56px;position:relative;box-shadow:var(--shadow);cursor:pointer}
+.top20 .t:hover{border-color:var(--ink2)}
+.top20 .t::before{counter-increment:t;content:counter(t);position:absolute;left:14px;top:8px;font-family:var(--serif);font-size:30px;color:var(--pop);line-height:1}
+.top20 .t h3{font-family:var(--serif);font-size:19px;line-height:1.15}
+.top20 .t p{margin:3px 0 0;font-size:13.5px;color:var(--ink2)}
+.top20 .t .w{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* ---------- practical ---------- */
+.prac{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.prac .p{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.prac .p h3{font-family:var(--serif);font-size:19px;margin-bottom:4px}
+.prac .p p{margin:0;font-size:14px;color:var(--ink2)}
+.foot-note{margin-top:30px;font-size:12px;color:var(--muted);max-width:80ch;line-height:1.5}
+@media (prefers-reduced-motion: reduce){*{transition:none !important}}
+</style>
+
+<header class="top"><div class="top-in">
+  <div class="brand"><h1>Philly <em>on foot</em></h1><span class="sub">21 Aug – 11 Oct 2026 · from 1310 Walnut</span></div>
+  <nav class="tabs" role="tablist">
+    <button data-v="map" class="on">Map</button>
+    <button data-v="eat">Eat &amp; Drink</button>
+    <button data-v="do">See &amp; Do</button>
+    <button data-v="walks">Walks</button>
+    <button data-v="cal">Calendar</button>
+    <button data-v="top">Top 20</button>
+    <button data-v="prac">Practical</button>
+  </nav>
+</div></header>
+
+<main class="wrap">
+  <!-- MAP -->
+  <section class="view on" id="v-map">
+    <div class="filters" id="mapfilters"></div>
+    <div class="maplayout">
+      <div class="mapcard" id="mapcard">
+        <div class="zoomctl"><button data-z="in" aria-label="Zoom in">+</button><button data-z="out" aria-label="Zoom out">−</button><button data-z="reset" aria-label="Reset view">⌂</button></div><div class="map-hint">Click a neighbourhood or a pin · scroll to zoom · drag to pan</div>
+        <div class="map-legend"><span><i class="pop"></i>your London taste</span><span><i></i>everything else</span><span><i class="blue"></i>on your Maps list</span><span><i class="home"></i>home / Wharton</span></div>
+      </div>
+      <aside class="panel" id="panel"></aside>
+    </div>
+  </section>
+
+  <!-- EAT -->
+  <section class="view" id="v-eat">
+    <p class="intro"><b>Very unequal by design.</b> Rittenhouse, Wash West, Bella Vista/Queen Village and Fishtown carry most of it. Orange-edged cards are the ones nearest the Acre / Toklas / Canteen register (cool room, chef-led, natural wine, no fuss). <b>Hidden</b> = the places locals and cooks go; <b>famous</b> = the Philly go-to everyone will tell you about (still worth doing, once). Walk times are from your door.</p>
+    <div class="filters" id="eatfilters"></div>
+    <div class="grid" id="eatgrid"></div>
+  </section>
+
+  <!-- DO -->
+  <section class="view" id="v-do">
+    <p class="intro"><b>Sights, museums, venues, parks, shops, sport.</b> Priority 1 = do it; 2 = if it fits; 3 = if you're passing. Sport fixtures live in the Calendar tab and on the stadium cards.</p>
+    <div class="filters" id="dofilters"></div>
+    <div class="grid" id="dogrid"></div>
+  </section>
+
+  <!-- WALKS -->
+  <section class="view" id="v-walks">
+    <p class="intro"><b>Eight routes.</b> Philadelphia is the most walkable big city in the US: a flat grid, rowhouses, two rivers, and everything you care about within 5 km of your flat. Pick a walk to draw it on the map; the stops light up.</p>
+    <div class="maplayout rev">
+      <div>
+        <div class="walklist" id="walklist"></div>
+        <aside class="panel" id="walkpanel" style="position:static;max-height:none"></aside>
+      </div>
+      <div>
+        <div class="mapcard" id="walkmapcard"><div class="zoomctl"><button data-z="in" aria-label="Zoom in">+</button><button data-z="out" aria-label="Zoom out">−</button><button data-z="reset" aria-label="Reset view">⌂</button></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAL -->
+  <section class="view" id="v-cal">
+    <p class="intro"><b>The seven weeks, dated.</b> Fixtures verified against the 2026 schedules in Aug 2026; a few (Phillies Aug 21-23, Distance Run, Curtis recital dates) still need a check on the day. Standing weekly things first, then week by week.</p>
+    <div class="fixed">
+      <div class="f"><b>Every Saturday</b>Rittenhouse farmers market 9-2 · Clark Park market 10-2 · a 250th "Firstival" in a different neighbourhood · Machine Shop bakery at Bok</div>
+      <div class="f"><b>Every Sunday</b>Open Streets: West Walnut (Walnut car-free, 10-5, through Oct) · Headhouse Sq market 10-2 · Little Fish tasting menu · Standard Tap roof</div>
+      <div class="f"><b>Fridays</b>PMA pay-what-you-wish 5-8:45 with music · Bob &amp; Barbara's live jazz · Trestle Inn go-go</div>
+      <div class="f"><b>First Fridays (Sep 4, Oct 2)</b>Old City galleries 5-9 · Barnes evening · PMA first Sundays (Sep 6, Oct 4) pay-what-you-wish</div>
+      <div class="f"><b>Sport, all dates</b>Phillies home Sep 3-10 &amp; 22-27 (+ playoffs) · Eagles Aug 28 (pre), Sep 13, Oct 4 · Flyers Sep 30 opener · Penn Sep 26, Oct 10 · Union Sep 26, Oct 10</div>
+      <div class="f"><b>Fringe Festival</b>Sep 8-27, 300+ shows citywide, HQ on the Delaware at Race St</div>
+    </div>
+    <div class="cal" id="calgrid"></div>
+  </section>
+
+  <!-- TOP -->
+  <section class="view" id="v-top">
+    <p class="intro"><b>If you only do twenty things.</b> Ranked, so the order means something: the top eight are the ones to book or diarise in the first week. Click any to see it on the map.</p>
+    <div class="top20" id="topgrid"></div>
+  </section>
+
+  <!-- PRACTICAL -->
+  <section class="view" id="v-prac">
+    <div class="prac" id="pracgrid"></div>
+    <p class="foot-note">Built 16 Aug 2026 from the Infatuation (Apr-Jul 2026 lists), Resy and Philly Mag 2026 hit lists, the Inquirer's 2025-26 closures, the 2026 Phillies / Eagles / Flyers / Union / Penn schedules, and Isabella's own Apple Maps "Philly" guides. Places tagged "check address" are 2026 openings whose exact address I could not confirm; everything else is best re-checked in Maps before you set out, because Philly restaurants move. Star anything to build your own shortlist (saved in this browser).</p>
+  </section>
+</main>
+<div class="tooltip" id="tt"></div>
+
+<script>
+/*DATA*/
+</script>
+<script>
+// ---------- helpers ----------
+const $ = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TYPE = {eat:'Restaurant',drink:'Bar',cafe:'Cafe / bakery',shop:'Shop',see:'See',do:'Do / outdoors'};
+const TAGL = {you:'your London taste',hidden:'hidden / locals',famous:'famous Philly go-to',classic:'institution',dive:'dive',new:'new 2025-26',list:'on your Maps list',splurge:'splurge'};
+const HOODIDX = Object.fromEntries(HOODS.map((h,i)=>[h.k,i]));
+const HOODBY = Object.fromEntries(HOODS.map(h=>[h.k,h]));
+PLACES.forEach((p,i)=>{p.id=i; p.ll=P(p.at); p.km=hav(HOME.ll,p.ll); p.mins=Math.round(p.km*17);});
+HOODS.forEach(h=>{h.pts=h.poly.map(P); h.c=centroid(h.pts); h.l=h.lbl||h.c; h.mins=Math.round(hav(HOME.ll,h.c)*17);});
+function hav(a,b){const R=6371,dLat=(b[0]-a[0])*Math.PI/180,dLon=(b[1]-a[1])*Math.PI/180;const x=Math.sin(dLat/2)**2+Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(x));}
+function centroid(pts){let x=0,y=0;pts.forEach(p=>{x+=p[0];y+=p[1]});return [x/pts.length,y/pts.length];}
+function walkStr(p){ if(p.h==='far') return 'cab / train'; if(p.mins<=45) return p.mins+' min walk'; return p.mins+' min walk · subway '+Math.round(p.mins/2.6)+' min'; }
+const shortlist = new Set(JSON.parse(localStorage.getItem('philly-shortlist')||'[]'));
+function toggleStar(name){ if(shortlist.has(name)) shortlist.delete(name); else shortlist.add(name); localStorage.setItem('philly-shortlist',JSON.stringify([...shortlist])); render(); }
+const byName = n=>PLACES.find(p=>p.n===n);
+function RP(s){ if(typeof s==='string' && !/^W?[\d.]+\//.test(s)){ const p=byName(s); if(p) return p.ll; } return P(s); }
+
+// ---------- projection ----------
+const PHI = 9*Math.PI/180, LAT0=HOME.ll[0], LON0=HOME.ll[1];
+function proj(ll){ const dx=(ll[1]-LON0)*Math.cos(LAT0*Math.PI/180)*111320, dy=(ll[0]-LAT0)*110950; const X=dx*Math.cos(PHI)-dy*Math.sin(PHI), Y=dx*Math.sin(PHI)+dy*Math.cos(PHI); return [X,-Y]; }
+// bounds from hoods + on-map places
+let minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9;
+HOODS.forEach(h=>h.pts.forEach(ll=>{const [x,y]=proj(ll);minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}));
+PLACES.filter(p=>p.h!=='far').forEach(p=>{const [x,y]=proj(p.ll);minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);});
+const PAD=220; const VB=[minX-PAD,minY-PAD,(maxX-minX)+2*PAD,(maxY-minY)+2*PAD];
+const RIVERS = {
+  schuylkill:[[39.9160,-75.2060],[39.9250,-75.2010],[39.9330,-75.1980],[39.9390,-75.1900],[39.9440,-75.1840],[39.9500,-75.1830],[39.9560,-75.1825],[39.9615,-75.1835],[39.9660,-75.1830],[39.9700,-75.1880],[39.9760,-75.1930],[39.9860,-75.1900],[39.9980,-75.1880]],
+  delaware:[[39.9150,-75.1250],[39.9250,-75.1300],[39.9330,-75.1360],[39.9400,-75.1385],[39.9450,-75.1370],[39.9500,-75.1360],[39.9560,-75.1345],[39.9600,-75.1305],[39.9668,-75.1250],[39.9720,-75.1208],[39.9780,-75.1150],[39.9840,-75.1110],[39.9900,-75.1070]]
+};
+const STREETS = [
+  {n:'Broad St',pts:['14/Wolf','14/Berks'],major:true,lbl:'14/Federal',rot:90},
+  {n:'Market St',pts:['1/Market','W52/Market'],major:true,lbl:'22/Market'},
+  {n:'Walnut St',pts:['1.5/Walnut','W50/Walnut'],lbl:'W44/Walnut'},
+  {n:'Spruce St',pts:['1.5/Spruce','24.5/Spruce'],lbl:''},
+  {n:'South St',pts:['1.5/South','24.5/South'],lbl:'19/South'},
+  {n:'Washington Ave',pts:['4/Washington','25/Washington'],lbl:'20/Washington'},
+  {n:'Snyder Ave',pts:['4/Snyder','24/Snyder'],lbl:'19/Snyder'},
+  {n:'Spring Garden St',pts:['6/SpringGarden','24/SpringGarden'],lbl:'19/SpringGarden'},
+  {n:'Girard Ave',pts:['17/Girard','1/Girard',[39.9695,-75.1358],[39.9668,-75.1318]],lbl:'11/Girard'},
+  {n:'E Passyunk Ave',pts:[[39.9430,-75.1522],[39.9333,-75.1592],[39.9282,-75.1650],[39.9219,-75.1684]],lbl:''},
+  {n:'Frankford Ave',pts:[[39.9668,-75.1370],[39.9695,-75.1358],[39.9756,-75.1331],[39.9857,-75.1276],[39.9895,-75.1256]],lbl:''},
+  {n:'Ben Franklin Pkwy',pts:[[39.9536,-75.1640],[39.9578,-75.1700],[39.9656,-75.1810]],lbl:''},
+  {n:'Kelly Dr',pts:[[39.9670,-75.1830],[39.9697,-75.1877],[39.9760,-75.1930]],lbl:''},
+  {n:'Baltimore Ave',pts:['W40/Pine',[39.9487,-75.2105],[39.9475,-75.2225]],lbl:''},
+  {n:'2nd St',pts:['2/Bainbridge','2/Girard'],lbl:''},
+  {n:'Front St',pts:['1/South','1/Market','1/SpringGarden','1/Girard','1/York','1/Lehigh'],lbl:''},
+  {n:'20th St',pts:['20/Bainbridge','20/SpringGarden'],lbl:''},
+  {n:'9th St',pts:['9/Vine','9/Snyder'],lbl:''},
+  {n:'34th St',pts:['W34/Vine','W34/Pine'],lbl:''},
+];
+
+// ---------- map svg ----------
+function buildMap(container, opts={}){
+  const [vx,vy,vw,vh]=VB;
+  let s=`<svg viewBox="${vx} ${vy} ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map of central Philadelphia neighbourhoods">`;
+  s+=`<rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" fill="var(--surface)"/>`;
+  // rivers
+  for(const k in RIVERS){ s+=`<polyline class="water" stroke-width="${k==='delaware'?400:280}" points="${RIVERS[k].map(ll=>proj(ll).join(',')).join(' ')}"/>`; }
+  // hoods
+  HOODS.forEach((h,i)=>{ s+=`<polygon class="hood" data-h="${h.k}" style="--hf:var(--h${i%10})" points="${h.pts.map(ll=>proj(ll).join(',')).join(' ')}"><title>${esc(h.name)}</title></polygon>`; });
+  // streets
+  STREETS.forEach(st=>{ s+=`<polyline class="street ${st.major?'major':''}" points="${st.pts.map(p=>proj(P(p)).join(',')).join(' ')}"/>`; });
+  // labels for hoods
+  HOODS.forEach(h=>{ const [x,y]=proj(h.l); const small=h.short.length>11; s+=`<text class="hoodlbl ${small?'small':''}" x="${x}" y="${y+40}">${esc(h.short)}</text>`; });
+  // street labels
+  STREETS.filter(st=>st.lbl).forEach(st=>{ const [x,y]=proj(P(st.lbl)); s+=`<text class="streetlbl" x="${x}" y="${y-30}" ${st.rot?`transform="rotate(-90 ${x} ${y})"`:''}>${esc(st.n)}</text>`; });
+  // river labels
+  { const [x,y]=proj([39.9400,-75.1900]); s+=`<text class="streetlbl" x="${x-450}" y="${y}" transform="rotate(-62 ${x-450} ${y})">Schuylkill River</text>`; }
+  { const [x,y]=proj([39.9310,-75.1360]); s+=`<text class="streetlbl" x="${x+140}" y="${y}" transform="rotate(-70 ${x+140} ${y})">Delaware River</text>`; }
+  // routes layer
+  s+=`<g id="routes-${opts.id||'m'}"></g>`;
+  // pins
+  s+=`<g id="pins-${opts.id||'m'}">`;
+  PLACES.filter(p=>p.h!=='far').forEach(p=>{
+    const [x,y]=proj(p.ll); const cls=['pin','p'+p.p,p.tags.includes('you')?'you':(p.tags.includes('list')?'list':''),'t-'+p.t].join(' ');
+    const r=p.p===1?82:(p.p===2?64:50);
+    let g='';
+    if(p.t==='eat') g=`<circle class="g" cx="0" cy="0" r="${r}"/>`;
+    else if(p.t==='drink') g=`<rect class="g" x="${-r*0.8}" y="${-r*0.8}" width="${r*1.6}" height="${r*1.6}" transform="rotate(45)"/>`;
+    else if(p.t==='cafe') g=`<circle class="g" cx="0" cy="0" r="${r*0.75}"/>`;
+    else if(p.t==='shop') g=`<rect class="g" x="${-r*0.75}" y="${-r*0.75}" width="${r*1.5}" height="${r*1.5}" rx="14"/>`;
+    else if(p.t==='see') g=`<polygon class="g" points="0,${-r} ${r*0.95},${r*0.7} ${-r*0.95},${r*0.7}"/>`;
+    else g=`<circle class="g" cx="0" cy="0" r="${r}" style="fill:var(--surface);stroke:var(--accent);stroke-width:34"/>`;
+    s+=`<g class="${cls}" data-id="${p.id}" transform="translate(${x} ${y})"><g class="pk">${g}<text x="${r+30}" y="38">${esc(p.n.length>22?p.n.slice(0,21)+'…':p.n)}</text></g></g>`;
+  });
+  s+=`</g>`;
+  // home + wharton
+  [[HOME,'HOME'],[WHARTON,'WHARTON']].forEach(([pt,l])=>{ const [x,y]=proj(pt.ll); s+=`<g class="home" transform="translate(${x} ${y})"><g class="pk"><rect class="g" x="-70" y="-70" width="140" height="140" transform="rotate(45)"/><text x="110" y="35">${l}</text></g></g>`; });
+  s+=`</svg>`;
+  container.insertAdjacentHTML('afterbegin', s);
+}
+
+
+// ---------- pan / zoom ----------
+let suppressClick=false;
+function makeZoomable(card){
+  const svg=card.querySelector('svg'); let vb=[...VB];
+  const set=()=>{ svg.setAttribute('viewBox',vb.join(' ')); const z=VB[2]/vb[2]; svg.classList.toggle('z1',z>=1.5); svg.classList.toggle('z2',z>=2.6); svg.style.setProperty('--k', String(Math.min(1.3,Math.max(0.3,1/Math.pow(z,0.85))))); };
+  const zoomAt=(f,cx,cy)=>{ const nz=VB[2]/(vb[2]*f); if(nz<0.6||nz>10) return; vb=[cx-(cx-vb[0])*f, cy-(cy-vb[1])*f, vb[2]*f, vb[3]*f]; set(); };
+  svg.addEventListener('wheel',e=>{ e.preventDefault(); const r=svg.getBoundingClientRect(); const mx=vb[0]+(e.clientX-r.left)/r.width*vb[2], my=vb[1]+(e.clientY-r.top)/r.height*vb[3]; zoomAt(Math.exp(e.deltaY*0.0018),mx,my); },{passive:false});
+  let drag=null;
+  svg.addEventListener('pointerdown',e=>{ drag={x:e.clientX,y:e.clientY,vb:[...vb],moved:false}; });
+  window.addEventListener('pointermove',e=>{ if(!drag) return; const r=svg.getBoundingClientRect(); const dx=(e.clientX-drag.x)/r.width*vb[2], dy=(e.clientY-drag.y)/r.height*vb[3]; if(Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y)>4) drag.moved=true; if(drag.moved){ vb=[drag.vb[0]-dx,drag.vb[1]-dy,vb[2],vb[3]]; set(); } });
+  window.addEventListener('pointerup',()=>{ if(drag&&drag.moved) suppressClick=true; drag=null; });
+  card.querySelectorAll('.zoomctl button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); const cx=vb[0]+vb[2]/2, cy=vb[1]+vb[3]/2; if(b.dataset.z==='in') zoomAt(0.7,cx,cy); else if(b.dataset.z==='out') zoomAt(1/0.7,cx,cy); else { vb=[...VB]; set(); } }));
+  card._fitTo=(lls)=>{ let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; lls.forEach(ll=>{const [x,y]=proj(ll); x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);}); const w=Math.max(x1-x0,2200)*1.45, h=Math.max(y1-y0,2200)*1.45; const cx=(x0+x1)/2, cy=(y0+y1)/2; const ar=VB[2]/VB[3]; let W=w,H=h; if(W/H<ar) W=H*ar; else H=W/ar; vb=[cx-W/2,cy-H/2,W,H]; set(); };
+  card._zoomTo=(ll)=>{ const [x,y]=proj(ll); const w=VB[2]/2.2, h=VB[3]/2.2; vb=[x-w/2,y-h/2,w,h]; set(); };
+  set();
+}
+
+// ---------- state ----------
+const state = { view:'map', types:new Set(['eat','drink','cafe','shop','see','do']), tags:new Set(), p1:false, hood:'', sort:'p', sel:null, selHood:null, walk:null, q:'' };
+
+// ---------- filters ----------
+function filterBar(el, cfg){
+  let s='';
+  s+=`<div class="fgroup"><span class="lbl">Type</span>`+cfg.types.map(t=>`<button class="chip ${state.types.has(t)?'on':''}" data-type="${t}">${TYPE[t]}</button>`).join('')+`</div>`;
+  s+=`<div class="fgroup"><span class="lbl">Vibe</span>`+['you','hidden','famous','classic','dive','new','list','splurge'].map(t=>`<button class="chip ${state.tags.has(t)?'on':''}" data-tag="${t}"><span class="dot" style="--c:var(--${({you:'pop',hidden:'accent',famous:'brick',classic:'ochre',dive:'slate',new:'plum',list:'blue',splurge:'ink'})[t]})"></span>${TAGL[t]}</button>`).join('')+`</div>`;
+  s+=`<div class="fgroup"><button class="chip ${state.p1?'on':''}" data-p1="1">Priority 1 only</button><button class="chip ${state.tags.has('★')?'on':''}" data-tag="★">★ my shortlist</button></div>`;
+  if(cfg.hood){ s+=`<div class="fgroup"><select class="sel" data-hood><option value="">All neighbourhoods</option>`+HOODS.map(h=>`<option value="${h.k}" ${state.hood===h.k?'selected':''}>${esc(h.short)}</option>`).join('')+`<option value="far" ${state.hood==='far'?'selected':''}>Further out</option></select>`;
+    s+=`<select class="sel" data-sort><option value="p" ${state.sort==='p'?'selected':''}>Sort: priority</option><option value="d" ${state.sort==='d'?'selected':''}>Sort: nearest to home</option><option value="h" ${state.sort==='h'?'selected':''}>Sort: neighbourhood</option></select></div>`; }
+  s+=`<span class="count" data-count></span>`;
+  el.innerHTML=s;
+  el.onclick=e=>{ const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.type){ const t=b.dataset.type; if(state.types.has(t)&&state.types.size===1) return; state.types.has(t)?state.types.delete(t):state.types.add(t); }
+    if(b.dataset.tag){ const t=b.dataset.tag; state.tags.has(t)?state.tags.delete(t):state.tags.add(t); }
+    if(b.dataset.p1){ state.p1=!state.p1; }
+    render(); };
+  el.onchange=e=>{ if(e.target.dataset.hood!==undefined) state.hood=e.target.value; if(e.target.dataset.sort!==undefined) state.sort=e.target.value; render(); };
+}
+function passes(p, typeSet, useHood=true){
+  if(!typeSet.has(p.t)) return false;
+  if(state.p1 && p.p!==1) return false;
+  for(const t of state.tags){ if(t==='★'){ if(!shortlist.has(p.n)) return false; } else if(!p.tags.includes(t)) return false; }
+  if(useHood && state.hood && p.h!==state.hood) return false;
+  return true;
+}
+function sortPlaces(arr){ const a=[...arr]; if(state.sort==='d') a.sort((x,y)=>x.km-y.km); else if(state.sort==='h') a.sort((x,y)=>(HOODIDX[x.h]??99)-(HOODIDX[y.h]??99)||x.p-y.p); else a.sort((x,y)=>x.p-y.p||x.km-y.km); return a; }
+
+// ---------- badges / cards ----------
+function badges(p, withP=true){ return `<div class="badges">${withP?`<span class="b p${p.p}">P${p.p}</span>`:''}${p.tags.map(t=>`<span class="b ${t}">${TAGL[t]}</span>`).join('')}</div>`; }
+function card(p){ const hood=HOODBY[p.h]; return `<article class="card ${p.tags.includes('you')?'you':''}" data-id="${p.id}">
+  <div class="hd"><h3>${esc(p.n)}</h3><span class="price">${esc(p.price||'')}</span></div>
+  <div class="where"><b>${esc(TYPE[p.t])}</b> · ${esc(hood?hood.short:'Further out')} · ${walkStr(p)}${p.addr?` · ${esc(p.addr)}`:''}</div>
+  ${badges(p)}
+  <p>${esc(p.d)}</p>
+  ${p.tip?`<div class="tip"><b>The move</b>${esc(p.tip)}</div>`:''}
+  <div class="foot"><button class="star ${shortlist.has(p.n)?'on':''}" data-star="${esc(p.n)}">${shortlist.has(p.n)?'★ shortlisted':'☆ shortlist'}</button><button class="go" data-go="${p.id}">Show on map →</button></div>
+</article>`; }
+
+// ---------- panel ----------
+function hoodPanel(h){
+  const here=PLACES.filter(p=>p.h===h.k).sort((a,b)=>a.p-b.p);
+  const grp=t=>here.filter(p=>p.t===t);
+  const list=(title,arr)=>arr.length?`<h4>${title}</h4><ul class="plist">${arr.map(p=>`<li data-id="${p.id}"><span class="nm">${esc(p.n)}</span>${p.tags.includes('you')?'<span class="b you">you</span>':''}${p.tags.includes('list')?'<span class="b list">list</span>':''}${p.p===1?'<span class="b p1">P1</span>':''}<span class="mn">${p.mins} min</span></li>`).join('')}</ul>`:'';
+  return `<div class="eyebrow"><span>Neighbourhood</span><span>·</span><span>~${h.mins} min walk from home</span></div>
+    <h2>${esc(h.name)}</h2><div class="tag">${esc(h.tag)}</div>
+    <p>${esc(h.vibe)}</p>
+    <h4>Known for</h4><ul>${h.known.map(k=>`<li>${esc(k)}</li>`).join('')}</ul>
+    <h4>The main things</h4><ul>${h.main.map(k=>`<li>${esc(k)}</li>`).join('')}</ul>
+    ${list('Eat',grp('eat'))}${list('Drink',grp('drink'))}${list('Coffee & bakeries',grp('cafe'))}${list('See',grp('see'))}${list('Do',grp('do'))}${list('Shop',grp('shop'))}`;
+}
+function placePanel(p){ const hood=HOODBY[p.h];
+  return `<div class="eyebrow"><span>${esc(TYPE[p.t])}</span><span>·</span><button class="linkbtn" data-hood="${p.h}">${esc(hood?hood.short:'Further out')}</button></div>
+    <h2>${esc(p.n)}</h2>
+    ${badges(p)}
+    <div class="meta"><span>${walkStr(p)}</span>${p.addr?`<span>${esc(p.addr)}</span>`:''}${p.price?`<span>${esc(p.price)}</span>`:''}</div>
+    <p>${esc(p.d)}</p>
+    ${p.tip?`<div class="tip"><b>The move</b>${esc(p.tip)}</div>`:''}
+    <button class="star ${shortlist.has(p.n)?'on':''}" data-star="${esc(p.n)}">${shortlist.has(p.n)?'★ shortlisted':'☆ shortlist'}</button>`;
+}
+function defaultPanel(){
+  const st=[...shortlist].map(byName).filter(Boolean);
+  return `<div class="eyebrow">Start here</div><h2>Seven weeks, <em>on foot</em></h2>
+  <p>You live at 13th &amp; Walnut, the exact centre of the grid: Rittenhouse is 10 minutes west, the Italian Market 15 south, Old City 15 east, Fishtown 15 on the El. Almost everything here is under 40 minutes' walk.</p>
+  <p>Click a neighbourhood for its vibe and what it is known for; click a pin for the place. Filters above narrow the pins. <span style="color:var(--pop)">Orange</span> pins are the places closest to your London taste; larger pins are priority 1.</p>
+  <h4>Neighbourhoods, nearest first</h4><ul class="plist">${[...HOODS].sort((a,b)=>a.mins-b.mins).map(h=>`<li data-hood="${h.k}"><span class="nm">${esc(h.short)}</span><span style="color:var(--muted);font-style:italic;font-family:var(--serif)">${esc(h.tag)}</span><span class="mn">${h.mins} min</span></li>`).join('')}</ul>
+  ${st.length?`<h4>Your shortlist (${st.length})</h4><ul class="plist">${st.map(p=>`<li data-id="${p.id}"><span class="nm">${esc(p.n)}</span><span class="mn">${walkStr(p)}</span></li>`).join('')}</ul>`:'<h4>Shortlist</h4><p class="empty">Star places anywhere in the guide and they collect here.</p>'}`;
+}
+function walkPanel(w){
+  return `<div class="eyebrow"><span>Walk</span><span>·</span><span>${w.km} km · ~${w.mins} min</span></div><h2>${esc(w.name)}</h2><div class="tag">${esc(w.best)}</div>
+  <p>${esc(w.d)}</p><h4>Stops, in order</h4><ul class="plist">${w.stops.map(n=>{const p=byName(n); return p?`<li data-id="${p.id}"><span class="nm">${esc(n)}</span>${p.tags.includes('you')?'<span class="b you">you</span>':''}<span class="mn">${esc(TYPE[p.t])}</span></li>`:`<li><span class="nm">${esc(n)}</span></li>`;}).join('')}</ul>`;
+}
+
+// ---------- render ----------
+function applyMapFilters(svgSel, typeSet){
+  const svg=$(svgSel); if(!svg) return;
+  $$('.pin',svg).forEach(g=>{ const p=PLACES[+g.dataset.id]; const ok=passes(p,typeSet,false); g.classList.toggle('dim',!ok); g.classList.toggle('sel',state.sel===p.id); });
+  $$('.hood',svg).forEach(h=>h.classList.toggle('sel',state.selHood===h.dataset.h));
+}
+function render(){
+  $$('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===state.view));
+  $$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+state.view));
+  if(state.view==='map'){
+    filterBar($('#mapfilters'),{types:['eat','drink','cafe','shop','see','do'],hood:false});
+    applyMapFilters('#mapcard svg', state.types);
+    const n=PLACES.filter(p=>p.h!=='far'&&passes(p,state.types,false)).length; $('#mapfilters [data-count]').textContent=n+' places on the map';
+    const panel=$('#panel');
+    if(state.sel!=null) panel.innerHTML=placePanel(PLACES[state.sel]); else if(state.selHood) panel.innerHTML=hoodPanel(HOODBY[state.selHood]); else panel.innerHTML=defaultPanel();
+  }
+  if(state.view==='eat'){
+    const ts=['eat','drink','cafe']; filterBar($('#eatfilters'),{types:ts,hood:true});
+    const set=new Set(ts.filter(t=>state.types.has(t))); const arr=sortPlaces(PLACES.filter(p=>passes(p,set)));
+    $('#eatfilters [data-count]').textContent=arr.length+' places';
+    $('#eatgrid').innerHTML=arr.map(card).join('')||'<p class="intro">Nothing matches. Loosen a filter.</p>';
+  }
+  if(state.view==='do'){
+    const ts=['see','do','shop']; filterBar($('#dofilters'),{types:ts,hood:true});
+    const set=new Set(ts.filter(t=>state.types.has(t))); const arr=sortPlaces(PLACES.filter(p=>passes(p,set)));
+    $('#dofilters [data-count]').textContent=arr.length+' places';
+    $('#dogrid').innerHTML=arr.map(card).join('')||'<p class="intro">Nothing matches. Loosen a filter.</p>';
+  }
+  if(state.view==='walks'){
+    $('#walklist').innerHTML=WALKS.map((w,i)=>`<div class="walk ${state.walk===w.k?'on':''}" data-walk="${w.k}"><div class="num">${i+1}</div><div><h3>${esc(w.name)}</h3><div class="m">${esc(w.best)}</div></div><div class="stat"><b>${w.km} km</b>~${w.mins} min</div></div>`).join('');
+    const w=WALKS.find(x=>x.k===state.walk)||WALKS[0]; if(!state.walk) state.walk=w.k;
+    drawWalk(w); $('#walkpanel').innerHTML=walkPanel(w);
+    $$('.walk').forEach(el=>el.classList.toggle('on',el.dataset.walk===w.k));
+  }
+  if(state.view==='cal'){ $('#calgrid').innerHTML=CAL.map(w=>`<div class="week"><h3>${esc(w.wk)}</h3>${w.items.map(i=>`<div class="ev"><div class="d">${esc(i.d)}</div><div class="t">${esc(i.t).replace(/(EAGLES HOME OPENER|FLYERS HOME OPENER)/g,'<b>$1</b>')}</div></div>`).join('')}</div>`).join(''); }
+  if(state.view==='top'){ $('#topgrid').innerHTML=TOP.map(t=>{const p=byName(t.ref||t.n); return `<div class="t" data-top="${esc(t.n)}"><h3>${esc(t.n)}</h3><p>${esc(t.why)}</p>${p?`<div class="w">${esc(HOODBY[p.h]?HOODBY[p.h].short:'Further out')} · ${walkStr(p)}</div>`:''}</div>`;}).join(''); }
+  if(state.view==='prac'){ $('#pracgrid').innerHTML=PRACTICAL.map(x=>`<div class="p"><h3>${esc(x.h)}</h3><p>${esc(x.t)}</p></div>`).join(''); }
+}
+function drawWalk(w){
+  const g=$('#routes-w'); if(!g) return;
+  const pts=w.pts.map(p=>proj(RP(p)).join(',')).join(' ');
+  g.innerHTML=`<polyline class="route-glow" points="${pts}"/><polyline class="route" points="${pts}"/>`;
+  const card=$('#walkmapcard'); if(card._fitTo) card._fitTo(w.pts.map(RP));
+  const stopIds=new Set(w.stops.map(n=>byName(n)).filter(Boolean).map(p=>p.id));
+  $$('#walkmapcard .pin').forEach(el=>{ const on=stopIds.has(+el.dataset.id); el.classList.toggle('dim',!on); el.classList.toggle('sel',on); });
+}
+function showOnMap(id){ state.view='map'; state.sel=id; state.selHood=PLACES[id].h; const p=PLACES[id]; if(p.h==='far'){ state.selHood=null; } render(); if(p.h!=='far') $('#mapcard')._zoomTo(p.ll); window.scrollTo({top:0,behavior:'smooth'}); }
+
+// ---------- events ----------
+document.addEventListener('click',e=>{
+  if(suppressClick){ suppressClick=false; if(e.target.closest('svg')) return; }
+  const tab=e.target.closest('nav.tabs button'); if(tab){ state.view=tab.dataset.v; history.replaceState(null,'','#'+state.view); render(); return; }
+  const star=e.target.closest('[data-star]'); if(star){ toggleStar(star.dataset.star); return; }
+  const go=e.target.closest('[data-go]'); if(go){ showOnMap(+go.dataset.go); return; }
+  const top=e.target.closest('[data-top]'); if(top){ const t=TOP.find(x=>x.n===top.dataset.top); if(t.walk){ state.view='walks'; state.walk=t.walk; render(); window.scrollTo({top:0,behavior:'smooth'}); return; } const p=byName(t.ref||t.n); if(p) showOnMap(p.id); return; }
+  const wk=e.target.closest('[data-walk]'); if(wk){ state.walk=wk.dataset.walk; render(); return; }
+  const li=e.target.closest('.panel [data-id]'); if(li){ const id=+li.dataset.id; if(state.view==='walks'){ showOnMap(id); } else { state.sel=id; state.selHood=PLACES[id].h; render(); } return; }
+  const hb=e.target.closest('.panel [data-hood]'); if(hb){ state.sel=null; state.selHood=hb.dataset.hood; render(); return; }
+  const pin=e.target.closest('#mapcard .pin'); if(pin){ state.sel=+pin.dataset.id; state.selHood=PLACES[state.sel].h; render(); return; }
+  const wpin=e.target.closest('#walkmapcard .pin'); if(wpin){ showOnMap(+wpin.dataset.id); return; }
+  const hood=e.target.closest('#mapcard .hood'); if(hood){ state.sel=null; state.selHood=hood.dataset.h; render(); return; }
+  if(e.target.closest('#mapcard svg')){ state.sel=null; state.selHood=null; render(); }
+});
+// tooltip
+const tt=$('#tt');
+document.addEventListener('mousemove',e=>{
+  const pin=e.target.closest('.pin:not(.dim)'); const hood=!pin&&e.target.closest('.hood');
+  if(pin){ const p=PLACES[+pin.dataset.id]; tt.innerHTML=`<b>${esc(p.n)}</b><div class="m">${esc(TYPE[p.t])} · ${esc(HOODBY[p.h]?HOODBY[p.h].short:'')} · ${walkStr(p)}</div>${p.tags.length?`<div class="m">${p.tags.map(t=>TAGL[t]).join(' · ')}</div>`:''}`; }
+  else if(hood){ const h=HOODBY[hood.dataset.h]; tt.innerHTML=`<b>${esc(h.name)}</b><div class="m">${esc(h.tag)} · ~${h.mins} min walk</div>`; }
+  else { tt.style.display='none'; return; }
+  tt.style.display='block'; const x=Math.min(e.clientX+14, window.innerWidth-260), y=e.clientY+16; tt.style.left=x+'px'; tt.style.top=y+'px';
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ state.sel=null; state.selHood=null; render(); } });
+
+// ---------- init ----------
+const hv=location.hash.replace('#',''); if(['map','eat','do','walks','cal','top','prac'].includes(hv)) state.view=hv;
+window.addEventListener('hashchange',()=>{const v=location.hash.replace('#',''); if(v&&v!==state.view&&['map','eat','do','walks','cal','top','prac'].includes(v)){state.view=v;render();}});
+buildMap($('#mapcard'),{id:'m'}); makeZoomable($('#mapcard'));
+buildMap($('#walkmapcard'),{id:'w'}); makeZoomable($('#walkmapcard'));
+render();
+</script>
