@@ -5,7 +5,7 @@
 <style>
 /*FONTS*/
 :root{
-  --bg:#E8EAE4; --surface:#FBFBF8; --surface2:#F1F2ED; --ink:#141A17; --ink2:#3F4944; --muted:#6C756F; --line:#CCD2C9; --line2:#DEE2DA;
+  --bg:#E8EAE4; --surface:#FBFBF8; --surface2:#F1F2ED; --ink:#141A17; --ink2:#3F4944; --muted:#5C6660; --line:#CCD2C9; --line2:#DEE2DA;
   --accent:#0B4F52; --accent-ink:#FFFFFF; --pop:#F26B3A; --pop-ink:#1B1B1B; --water:#BFCFD6; --park:#D6DEC9;
   --brick:#A63D2F; --ochre:#B7862B; --slate:#5C6670; --plum:#6E4C8B; --blue:#2F6F9F;
   --h0:#D8DCCB; --h1:#E2D9C4; --h2:#D3DBDD; --h3:#E5D6CB; --h4:#D5DFD0; --h5:#DFD6DA; --h6:#D2DDD6; --h7:#E4DBC7; --h8:#D9D9E1; --h9:#DCE0CE;
@@ -68,7 +68,8 @@ html,body{overflow-x:hidden}
 /* ---------- map layout ---------- */
 .maplayout{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;align-items:start}
 .maplayout.rev{grid-template-columns:400px minmax(0,1fr)}
-@media (max-width:980px){.maplayout,.maplayout.rev{grid-template-columns:1fr}}
+@media (max-width:980px){.maplayout,.maplayout.rev{grid-template-columns:1fr}.mapcard{height:min(56vh,480px)}#v-map .panel{position:static;order:-1;max-height:62vh;overflow:auto}#v-map .maplayout{display:flex;flex-direction:column}.filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.fgroup{flex-wrap:nowrap}.count{white-space:nowrap}}
+@media (max-width:720px){nav.tabs{flex-wrap:wrap;overflow:visible;margin-left:0;width:100%;gap:0 4px}nav.tabs button{padding:8px 10px 10px;font-size:13px}}
 .mapcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);position:relative;height:min(82vh,780px)}
 .mapcard svg.schem{display:block;width:100%;height:100%;background:var(--surface)}
 .mapcard .leaf{width:100%;height:100%;background:var(--surface);font:inherit}
@@ -79,8 +80,11 @@ html,body{overflow-x:hidden}
 .map-legend{position:absolute;left:12px;bottom:26px;z-index:800;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:11px;color:var(--ink2);display:grid;grid-template-columns:auto auto;gap:3px 14px;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;pointer-events:none}
 .map-legend span{display:inline-flex;align-items:center;gap:6px}
 .map-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent)}
-.map-legend i.pop{background:var(--pop)}.map-legend i.home{background:var(--ink);border-radius:2px;transform:rotate(45deg)}
-.map-hint{position:absolute;right:12px;top:12px;z-index:800;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:8px;padding:5px 8px;pointer-events:none}
+.map-legend i.pop{background:var(--pop)}.map-legend i.home{background:var(--ink);box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--ink)}
+.map-legend i.sh{background:var(--ink2);margin:0 2px 0 6px}.map-legend i.sh.d{border-radius:2px;transform:rotate(45deg);width:8px;height:8px}.map-legend i.sh.s{border-radius:2px}.map-legend i.sh.t{width:0;height:0;border-radius:0;background:none;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid var(--ink2)}.map-legend i.sh.r{background:none;border:2px solid var(--ink2)}
+.map-legend i.v{width:10px;height:10px;border-radius:2px;margin:0 2px 0 6px;background:color-mix(in srgb,var(--vc) 22%,var(--surface));border:1px solid var(--vc)}.map-legend i.v.y{--vc:var(--accent)}.map-legend i.v.o{--vc:var(--ochre)}.map-legend i.v.t{--vc:var(--slate)}.map-legend i.v.s{--vc:var(--brick)}
+.map-legend{grid-template-columns:auto auto;max-width:calc(100% - 24px)}
+.map-hint{position:absolute;right:12px;top:12px;z-index:800;transition:opacity .5s;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:8px;padding:5px 8px;pointer-events:none}
 .zoomctl{position:absolute;left:12px;top:12px;z-index:800;display:flex;flex-direction:column;gap:4px}
 .zoomctl button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 92%,transparent);color:var(--ink2);font-size:16px;line-height:1;display:grid;place-items:center}
 .zoomctl button:hover{color:var(--ink);border-color:var(--ink2)}
@@ -88,10 +92,11 @@ html,body{overflow-x:hidden}
 .tooltip b{font-weight:600}
 .tooltip .m{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
 /* leaflet overlays */
-.leaflet-overlay-pane .hood{fill:var(--hf,var(--h0));fill-opacity:.62;stroke:var(--surface);stroke-width:1.5;stroke-opacity:.9;cursor:pointer;transition:fill-opacity .2s}
-.leaflet-overlay-pane .hood:hover{fill-opacity:.8}
-.leaflet-overlay-pane .hood.sel{stroke:var(--ink);stroke-width:2;stroke-dasharray:6 4;fill-opacity:.7}
-.leaflet-overlay-pane .hood.h0{--hf:var(--h0)}.leaflet-overlay-pane .hood.h1{--hf:var(--h1)}.leaflet-overlay-pane .hood.h2{--hf:var(--h2)}.leaflet-overlay-pane .hood.h3{--hf:var(--h3)}.leaflet-overlay-pane .hood.h4{--hf:var(--h4)}.leaflet-overlay-pane .hood.h5{--hf:var(--h5)}.leaflet-overlay-pane .hood.h6{--hf:var(--h6)}.leaflet-overlay-pane .hood.h7{--hf:var(--h7)}.leaflet-overlay-pane .hood.h8{--hf:var(--h8)}.leaflet-overlay-pane .hood.h9{--hf:var(--h9)}
+.leaflet-overlay-pane .hood{fill:var(--hf,var(--h0));fill-opacity:.2;stroke:var(--surface);stroke-width:1.5;stroke-opacity:.9;cursor:pointer;transition:fill-opacity .2s}
+.leaflet-overlay-pane .hood.sel{stroke:var(--ink);stroke-width:2;stroke-dasharray:6 4}
+.leaflet-overlay-pane .hood.v-yes{--hf:var(--accent);fill-opacity:.22}.leaflet-overlay-pane .hood.v-once{--hf:var(--ochre);fill-opacity:.2}.leaflet-overlay-pane .hood.v-through{--hf:var(--slate);fill-opacity:.16}.leaflet-overlay-pane .hood.v-skip{--hf:var(--brick);fill-opacity:.14}
+.leaflet-overlay-pane .hood:hover{fill-opacity:.36}
+.leaflet-overlay-pane .hood.sel{fill-opacity:.3}
 .leaflet-overlay-pane .route{stroke:var(--pop);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:10 7;fill:none}
 .leaflet-overlay-pane .route-glow{stroke:var(--surface);stroke-width:10;stroke-linecap:round;stroke-linejoin:round;fill:none;stroke-opacity:.9}
 .hoodlbl-l{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--ink2);white-space:nowrap;text-shadow:0 0 3px var(--surface),0 0 6px var(--surface);pointer-events:none;transform:translate(-50%,-50%);opacity:.9}
@@ -108,11 +113,13 @@ html,body{overflow-x:hidden}
 .lpin.t-do.you .g{border-color:var(--pop)}
 .lpin.p1{--s:15px}.lpin.p2{--s:12px}.lpin.p3{--s:9px}
 .lpin.dim{opacity:.15;pointer-events:none}
+.leaf:not(.z1) .lpin.p3{--s:5px;opacity:.55;pointer-events:none}
 .lpin.sel .g{outline:2px solid var(--ink);outline-offset:1px}
-.lpin .lb{position:absolute;left:calc(var(--s,12px)/2 + 5px);top:-8px;font-size:11.5px;font-weight:500;color:var(--ink);white-space:nowrap;text-shadow:0 0 3px var(--surface),0 0 5px var(--surface),0 0 8px var(--surface);display:none;pointer-events:none}
+.lpin .lb{position:absolute;left:calc(var(--s,12px)/2 + 5px);top:-9px;font-size:11.5px;font-weight:500;color:var(--ink);white-space:nowrap;background:color-mix(in srgb,var(--surface) 86%,transparent);padding:1px 5px;border-radius:3px;display:none;pointer-events:none;line-height:1.3}
 .leaf.z1 .lpin.p1 .lb,.leaf.z2 .lpin .lb,.lpin.sel .lb{display:block}
+
 .lhome{position:relative}
-.lhome .g{position:absolute;left:0;top:0;width:14px;height:14px;transform:translate(-50%,-50%) rotate(45deg);background:var(--ink);border:2px solid var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.lhome .g{position:absolute;left:0;top:0;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);background:var(--ink);border:2px solid var(--surface);box-shadow:0 0 0 2px var(--ink),0 1px 4px rgba(0,0,0,.4)}
 .lhome .lb{position:absolute;left:12px;top:-8px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--ink);text-shadow:0 0 3px var(--surface),0 0 6px var(--surface);white-space:nowrap}
 .leaflet-marker-icon{cursor:pointer}
 /* schematic svg fallback */
@@ -142,7 +149,7 @@ svg.z2 .pin text{display:block}
 .home text{font-family:var(--mono);font-size:100px;letter-spacing:.08em;text-transform:uppercase;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:30}
 
 /* ---------- panel ---------- */
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:18px 20px;max-height:min(82vh,780px);overflow:auto;position:sticky;top:78px}
+.panel{background:linear-gradient(var(--surface) 30%,transparent) top/100% 28px no-repeat local,linear-gradient(transparent,var(--surface) 70%) bottom/100% 28px no-repeat local,radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.14),transparent) top/100% 12px no-repeat scroll,radial-gradient(farthest-side at 50% 100%,rgba(0,0,0,.14),transparent) bottom/100% 12px no-repeat scroll,var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:18px 20px;max-height:min(82vh,780px);overflow:auto;position:sticky;top:78px}
 .panel .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .panel h2{font-family:var(--serif);font-size:27px;line-height:1.05;margin-bottom:4px}
 .panel h2 em{font-style:italic;color:var(--muted)}
@@ -159,9 +166,10 @@ svg.z2 .pin text{display:block}
 .panel .empty{color:var(--muted);font-style:italic}
 .badges{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 10px}
 .b{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:4px;border:1px solid var(--bc,var(--line));color:var(--bc,var(--ink2))}
-.b.you{--bc:var(--pop)}.b.hidden{--bc:var(--accent)}.b.famous{--bc:var(--brick)}.b.classic{--bc:var(--ochre)}.b.dive{--bc:var(--slate)}.b.new{--bc:var(--plum)}.b.splurge{--bc:var(--ink)}
+.b.you{--bc:var(--pop)}.b.hidden{--bc:var(--accent)}.b.famous{--bc:var(--blue)}.b.classic{--bc:var(--ochre)}.b.dive{--bc:var(--slate)}.b.new{--bc:var(--plum)}.b.splurge{--bc:var(--ink)}
 .b.p1{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .b.p2{border-style:dashed}
+.b.p3{border-style:dotted;opacity:.65}
 .meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted);margin-bottom:10px}
 .tip{border-left:2px solid var(--pop);padding:6px 10px;background:var(--surface2);border-radius:0 8px 8px 0;font-size:14px;color:var(--ink2);margin-top:8px}
 .tip b{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--pop);display:block;margin-bottom:2px}
@@ -183,7 +191,7 @@ svg.z2 .pin text{display:block}
 .card .hd{display:flex;align-items:baseline;gap:8px}
 .card h3{font-family:var(--serif);font-size:21px;line-height:1.1}
 .card .price{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap}
-.card .where{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card .where{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .card .where b{color:var(--ink2);font-weight:500}
 .card p{margin:2px 0 0;color:var(--ink2);font-size:14px}
 .card .foot{display:flex;gap:8px;align-items:center;margin-top:6px}
@@ -214,7 +222,7 @@ svg.z2 .pin text{display:block}
 .walk.on{border-color:var(--pop);background:color-mix(in srgb,var(--pop) 6%,var(--surface))}
 .walk .num{font-family:var(--serif);font-size:26px;color:var(--pop);width:34px;text-align:center}
 .walk h3{font-family:var(--serif);font-size:19px;line-height:1.15}
-.walk .m{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.walk .m{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .walk .stat{font-family:var(--mono);font-size:11px;color:var(--ink2);text-align:right;white-space:nowrap;letter-spacing:.04em}
 .walk .stat b{display:block;font-size:16px;font-weight:500;color:var(--ink);font-family:var(--serif)}
 
@@ -235,7 +243,7 @@ svg.z2 .pin text{display:block}
 .top20 .t::before{counter-increment:t;content:counter(t);position:absolute;left:14px;top:8px;font-family:var(--serif);font-size:30px;color:var(--pop);line-height:1}
 .top20 .t h3{font-family:var(--serif);font-size:19px;line-height:1.15}
 .top20 .t p{margin:3px 0 0;font-size:13.5px;color:var(--ink2)}
-.top20 .t .w{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.top20 .t .w{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
 
 /* ---------- practical ---------- */
 .prac{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
@@ -243,7 +251,7 @@ svg.z2 .pin text{display:block}
 .prac .p h3{font-family:var(--serif);font-size:19px;margin-bottom:4px}
 .prac .p p{margin:0;font-size:14px;color:var(--ink2)}
 .foot-note{margin-top:30px;font-size:12px;color:var(--muted);max-width:80ch;line-height:1.5}
-.music-note{max-width:80ch;color:var(--ink2);margin:0 0 16px;font-size:14.5px}
+.music-note{max-width:64ch;color:var(--ink2);margin:0 0 12px;font-size:15px}
 @media (prefers-reduced-motion: reduce){*{transition:none !important}}
 </style>
 
@@ -270,7 +278,7 @@ svg.z2 .pin text{display:block}
       <div class="mapcard" id="mapcard">
         <div class="zoomctl"><button data-z="in" aria-label="Zoom in">+</button><button data-z="out" aria-label="Zoom out">−</button><button data-z="reset" aria-label="Reset view">⌂</button></div>
         <div class="map-hint">Click a neighbourhood or a pin · scroll to zoom · drag to pan</div>
-        <div class="map-legend"><span><i class="pop"></i>your London taste</span><span><i></i>everything else</span><span><i class="home"></i>home / Wharton</span><span>bigger = higher priority</span></div>
+        <div class="map-legend"><span><i class="pop"></i>your London taste</span><span><i></i>everything else</span><span><i class="home"></i>home / Wharton</span><span><i class="sh c"></i>eat <i class="sh d"></i>drink <i class="sh s"></i>shop <i class="sh t"></i>see <i class="sh r"></i>do</span><span>bigger = higher priority</span><span>tint = verdict: <i class="v y"></i>go <i class="v o"></i>once <i class="v t"></i>through <i class="v s"></i>skip</span></div>
       </div>
       <aside class="panel" id="panel"></aside>
     </div>
@@ -372,10 +380,10 @@ function buildLeaflet(card, id){
   const div=document.createElement('div'); div.className='leaf'; card.insertAdjacentElement('afterbegin',div);
   const map=L.map(div,{zoomControl:false,attributionControl:true,scrollWheelZoom:true,minZoom:11,maxZoom:18});
   const tiles=L.tileLayer(tileUrl(),{attribution:'© OpenStreetMap, © CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
-  const labels=L.tileLayer(labelUrl(),{subdomains:'abcd',maxZoom:19,pane:'shadowPane'}); const syncLabels=()=>{ const on=map.getZoom()>=14; if(on&&!map.hasLayer(labels)) labels.addTo(map); if(!on&&map.hasLayer(labels)) map.removeLayer(labels); };
+  const labels=L.tileLayer(labelUrl(),{subdomains:'abcd',maxZoom:19,pane:'shadowPane'}); const syncLabels=()=>{ const on=map.getZoom()>=14 && id!=='w'; if(on&&!map.hasLayer(labels)) labels.addTo(map); if(!on&&map.hasLayer(labels)) map.removeLayer(labels); };
   // hoods
   const hoodLayers={};
-  MAPHOODS.forEach((h,i)=>{ const pg=L.polygon(h.pts,{className:'hood h'+(i%10),interactive:true}).addTo(map); pg.on('add',()=>{ const el=pg.getElement(); if(el){ el.dataset.h=h.k; } }); const el=pg.getElement(); if(el) el.dataset.h=h.k; hoodLayers[h.k]=pg;
+  MAPHOODS.forEach((h,i)=>{ const pg=L.polygon(h.pts,{className:'hood v-'+(h.verdict||'through'),interactive:true}).addTo(map); pg.on('add',()=>{ const el=pg.getElement(); if(el){ el.dataset.h=h.k; } }); const el=pg.getElement(); if(el) el.dataset.h=h.k; hoodLayers[h.k]=pg;
     L.marker(h.l,{icon:L.divIcon({className:'',html:`<div class="hoodlbl-l">${esc(h.short)}</div>`,iconSize:[0,0]}),interactive:false,keyboard:false}).addTo(map); });
   // pins
   const pins={};
@@ -387,8 +395,9 @@ function buildLeaflet(card, id){
   const routes=L.layerGroup().addTo(map);
   const bounds=L.latLngBounds(MAPHOODS.flatMap(h=>h.pts));
   const home=()=>map.fitBounds(bounds,{padding:[10,10]});
-  map.on('zoomend',()=>{ const z=map.getZoom(); div.classList.toggle('z1',z>=14.5); div.classList.toggle('z2',z>=16); syncLabels(); }); syncLabels();
+  const syncZ=()=>{ const z=map.getZoom(); div.classList.toggle('z1',z>=14.5); div.classList.toggle('z2',z>=16.5); div.classList.toggle('z0',z<14); syncLabels(); }; map.on('zoomend',syncZ); syncZ();
   map.on('dragend',()=>{ suppressClick=true; setTimeout(()=>suppressClick=false,300); });
+  const hint=card.querySelector('.map-hint'); if(hint){ const hide=()=>hint.style.opacity=0; map.on('movestart zoomstart click',hide); setTimeout(hide,7000); }
   card.querySelectorAll('.zoomctl button').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); if(b.dataset.z==='in') map.zoomIn(); else if(b.dataset.z==='out') map.zoomOut(); else home(); }));
   home(); setTimeout(()=>{ map.invalidateSize(); home(); },50);
   const api={map,pins,hoodLayers,routes,tiles,labels,home,
@@ -501,11 +510,11 @@ function fitMainToHood(h){ if(!h||!h.pts) return; if(HAS_L && MAPS.m) MAPS.m.fit
 function filterBar(el, cfg){
   let s='';
   s+=`<div class="fgroup"><span class="lbl">Type</span>`+cfg.types.map(t=>`<button class="chip ${state.types.has(t)?'on':''}" data-type="${t}">${TYPE[t]}</button>`).join('')+`</div>`;
-  s+=`<div class="fgroup"><span class="lbl">Vibe</span>`+['you','hidden','famous','classic','dive','new','splurge'].map(t=>`<button class="chip ${state.tags.has(t)?'on':''}" data-tag="${t}"><span class="dot" style="--c:var(--${({you:'pop',hidden:'accent',famous:'brick',classic:'ochre',dive:'slate',new:'plum',splurge:'ink'})[t]})"></span>${TAGL[t]}</button>`).join('')+`</div>`;
+  s+=`<div class="fgroup"><span class="lbl">Vibe</span>`+['you','hidden','famous','classic','dive','new','splurge'].map(t=>`<button class="chip ${state.tags.has(t)?'on':''}" data-tag="${t}"><span class="dot" style="--c:var(--${({you:'pop',hidden:'accent',famous:'blue',classic:'ochre',dive:'slate',new:'plum',splurge:'ink'})[t]})"></span>${TAGL[t]}</button>`).join('')+`</div>`;
   s+=`<div class="fgroup"><button class="chip ${state.p1?'on':''}" data-p1="1">Priority 1 only</button><button class="chip ${state.tags.has('★')?'on':''}" data-tag="★">★ my shortlist</button></div>`;
   if(cfg.hood){ s+=`<div class="fgroup"><select class="sel" data-hood><option value="">All neighbourhoods</option>`+MAPHOODS.map(h=>`<option value="${h.k}" ${state.hood===h.k?'selected':''}>${esc(h.short)}</option>`).join('')+`<option value="far" ${state.hood==='far'?'selected':''}>Further out</option></select>`;
     s+=`<select class="sel" data-sort><option value="p" ${state.sort==='p'?'selected':''}>Sort: priority</option><option value="d" ${state.sort==='d'?'selected':''}>Sort: nearest to home</option><option value="h" ${state.sort==='h'?'selected':''}>Sort: neighbourhood</option></select></div>`; }
-  s+=`<span class="count" data-count></span>`;
+  s+=`<span class="lbl" style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">P1 do it · P2 if it fits · P3 if passing</span><span class="count" data-count></span>`;
   el.innerHTML=s;
   el.onclick=e=>{ const b=e.target.closest('button'); if(!b) return;
     if(b.dataset.type){ const t=b.dataset.type; if(state.types.has(t)&&state.types.size===1) return; state.types.has(t)?state.types.delete(t):state.types.add(t); }
@@ -565,8 +574,7 @@ function defaultPanel(){
   const st=[...shortlist].map(byName).filter(Boolean);
   const ranked=[...HOODS].filter(h=>h.rank).sort((a,b)=>a.rank-b.rank).slice(0,12);
   return `<div class="eyebrow">Start here</div><h2>Seven weeks, <em>on foot</em></h2>
-  <p>You live at 13th &amp; Walnut, the exact centre of the grid: Rittenhouse is 10 minutes west, the Italian Market 15 south, Old City 15 east, Fishtown 15 on the El. Almost everything here is under 40 minutes' walk.</p>
-  <p>Click a neighbourhood for the honest write-up (worth it or not, what to avoid, the London and New York equivalent); click a pin for the place. Filters above narrow the pins. <span style="color:var(--pop)">Orange</span> pins are the places closest to your London taste; larger pins are priority 1.</p>
+  <p>13th &amp; Walnut is the exact centre of the grid: Rittenhouse 10 min west, the Italian Market 15 south, Old City 15 east, Fishtown 15 on the El. Tap a tinted neighbourhood or a pin.</p>
   <h4>Neighbourhoods, in priority order</h4><ul class="plist">${ranked.map(h=>`<li data-hood="${h.k}"><span class="nm">${h.rank}. ${esc(h.short)}</span>${verdictPill(h)}<span class="mn">${h.mins!=null?h.mins+' min':'train'}</span></li>`).join('')}</ul>
   <p style="margin-top:8px"><button class="linkbtn" data-tab="hoods">See all ${HOODS.length} ranked, with when to go →</button></p>
   ${st.length?`<h4>Your shortlist (${st.length})</h4><ul class="plist">${st.map(p=>`<li data-id="${p.id}"><span class="nm">${esc(p.n)}</span><span class="mn">${walkStr(p)}</span></li>`).join('')}</ul>`:'<h4>Shortlist</h4><p class="empty">Star places anywhere in the guide and they collect here.</p>'}`;
@@ -585,7 +593,7 @@ function hoodRankCard(h){ const top=(h.main||[]).slice(0,3);
 function musicView(){
   const M = (typeof MUSIC!=='undefined')?MUSIC:null;
   if(!M) return '<p class="intro">Music section loading: the show listings are being compiled.</p>';
-  let s=`<p class="intro"><b>${esc(M.headline||'The music scene')}</b></p><p class="music-note">${esc(M.scene||'')}</p>`;
+  let s=`<p class="intro"><b>${esc(M.headline||'The music scene')}</b></p>`+(M.scene||'').split('\n\n').map(par=>{ const i=par.indexOf(':'); return `<p class="music-note">${i>0&&i<40?`<b style="color:var(--ink);font-weight:500">${esc(par.slice(0,i+1))}</b>${esc(par.slice(i+1))}`:esc(par)}</p>`; }).join('');
   if(M.bars&&M.bars.length){ s+=`<h3 style="font-family:var(--serif);font-size:22px;margin:18px 0 8px">Music bars and rooms</h3><div class="grid">`+M.bars.map(b=>{const p=byName(b.n); return `<article class="card ${p&&p.tags.includes('you')?'you':''}"><div class="hd"><h3>${esc(b.n)}</h3></div><div class="where">${esc(b.where||'')}</div><p>${esc(b.d)}</p>${p?`<div class="foot"><button class="go" data-go="${p.id}">Show on map →</button></div>`:''}</article>`;}).join('')+`</div>`; }
   if(M.shows&&M.shows.length){ s+=`<h3 style="font-family:var(--serif);font-size:22px;margin:22px 0 8px">Who is playing, 21 Aug – 11 Oct</h3><p class="music-note">${esc(M.showsNote||'')}</p><div class="dates">`;
     const byV={}; M.shows.forEach(x=>{(byV[x.v]=byV[x.v]||[]).push(x);});
@@ -602,7 +610,7 @@ function render(){
   if(state.view==='map'){
     filterBar($('#mapfilters'),{types:['eat','drink','cafe','shop','see','do'],hood:false});
     applyMapFilters('#mapcard','m', state.types);
-    const n=PLACES.filter(p=>p.h!=='far'&&passes(p,state.types,false)).length; $('#mapfilters [data-count]').textContent=n+' places on the map';
+    const n=PLACES.filter(p=>p.h!=='far'&&passes(p,state.types,false)).length; $('#mapfilters [data-count]').textContent=n+' places · P3 pins grow as you zoom in';
     const panel=$('#panel');
     if(state.sel!=null) panel.innerHTML=placePanel(PLACES[state.sel]); else if(state.selHood) panel.innerHTML=hoodPanel(HOODBY[state.selHood]); else panel.innerHTML=defaultPanel();
     if(HAS_L&&MAPS.m) setTimeout(()=>MAPS.m.invalidate(),0);
