@@ -55,7 +55,7 @@ nav.tabs button.on{color:var(--ink);border-bottom-color:var(--pop)}
 .filters{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:14px}
 .fgroup{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .fgroup .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:2px}
-.chip{border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:13px;color:var(--ink2);background:var(--surface);display:inline-flex;align-items:center;gap:6px;transition:background .15s,color .15s,border-color .15s}
+.chip{border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:13px;white-space:nowrap;flex:0 0 auto;color:var(--ink2);background:var(--surface);display:inline-flex;align-items:center;gap:6px;transition:background .15s,color .15s,border-color .15s}
 .chip:hover{border-color:var(--ink2)}
 .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--c,var(--accent))}
@@ -68,7 +68,7 @@ html,body{overflow-x:hidden}
 /* ---------- map layout ---------- */
 .maplayout{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;align-items:start}
 .maplayout.rev{grid-template-columns:400px minmax(0,1fr)}
-@media (max-width:980px){.maplayout,.maplayout.rev{grid-template-columns:1fr}.mapcard{height:min(56vh,480px)}#v-map .panel{position:static;order:-1;max-height:62vh;overflow:auto}#v-map .maplayout{display:flex;flex-direction:column}.filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.fgroup{flex-wrap:nowrap}.count{white-space:nowrap}}
+@media (max-width:980px){.maplayout,.maplayout.rev{grid-template-columns:1fr}.mapcard{height:min(56vh,480px)}#v-map .panel{position:static;order:-1;max-height:62vh;overflow:auto}#v-map .maplayout{display:flex;flex-direction:column}.filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;gap:6px;-webkit-overflow-scrolling:touch}.fgroup{flex-wrap:nowrap;flex:0 0 auto}.filters .chip,.filters .sel,.filters .lbl,.filters .count{flex:0 0 auto;white-space:nowrap}.filters .count{margin-left:8px}.filters>.lbl{display:none}}
 @media (max-width:720px){nav.tabs{flex-wrap:wrap;overflow:visible;margin-left:0;width:100%;gap:0 4px}nav.tabs button{padding:8px 10px 10px;font-size:13px}}
 .mapcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);position:relative;height:min(82vh,780px)}
 .mapcard svg.schem{display:block;width:100%;height:100%;background:var(--surface)}
@@ -653,12 +653,12 @@ document.addEventListener('click',e=>{
   const go=e.target.closest('[data-go]'); if(go){ showOnMap(+go.dataset.go); return; }
   const hg=e.target.closest('[data-hoodgo]'); if(hg){ showHood(hg.dataset.hoodgo); return; }
   const top=e.target.closest('[data-top]'); if(top){ const t=TOP.find(x=>x.n===top.dataset.top); if(t.walk){ state.view='walks'; state.walk=t.walk; render(); window.scrollTo({top:0,behavior:'smooth'}); return; } const p=byName(t.ref||t.n); if(p) showOnMap(p.id); return; }
-  const wk=e.target.closest('[data-walk]'); if(wk){ state.walk=wk.dataset.walk; render(); return; }
+  const wk=e.target.closest('[data-walk]'); if(wk){ state.walk=wk.dataset.walk; render(); if(window.innerWidth<980) setTimeout(()=>$('#walkmapcard').scrollIntoView({behavior:'smooth',block:'start'}),50); return; }
   const li=e.target.closest('.panel [data-id]'); if(li){ const id=+li.dataset.id; if(state.view==='walks'){ showOnMap(id); } else { state.sel=id; state.selHood=PLACES[id].h==='far'?null:PLACES[id].h; render(); zoomMainTo(PLACES[id].ll); } return; }
   const hb=e.target.closest('.panel [data-hood]'); if(hb){ state.sel=null; state.selHood=hb.dataset.hood; render(); fitMainToHood(HOODBY[hb.dataset.hood]); return; }
-  const pin=e.target.closest('#mapcard .pin'); if(pin){ state.sel=+pin.dataset.id; state.selHood=PLACES[state.sel].h; render(); return; }
+  const pin=e.target.closest('#mapcard .pin'); if(pin){ state.sel=+pin.dataset.id; state.selHood=PLACES[state.sel].h; render(); if(window.innerWidth<980) $('#panel').scrollIntoView({behavior:'smooth',block:'start'}); return; }
   const wpin=e.target.closest('#walkmapcard .pin'); if(wpin){ showOnMap(+wpin.dataset.id); return; }
-  const hood=e.target.closest('#mapcard .hood'); if(hood){ state.sel=null; state.selHood=hood.dataset.h; render(); return; }
+  const hood=e.target.closest('#mapcard .hood'); if(hood){ state.sel=null; state.selHood=hood.dataset.h; render(); if(window.innerWidth<980) $('#panel').scrollIntoView({behavior:'smooth',block:'start'}); return; }
   if(e.target.closest('#mapcard .leaf, #mapcard svg') && !e.target.closest('.zoomctl')){ state.sel=null; state.selHood=null; render(); }
 });
 const tt=$('#tt');
