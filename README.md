@@ -1,6 +1,6 @@
 # Philly on Foot
 
-A single-file interactive guide to Philadelphia for Isabella's Wharton exchange (21 Aug – 11 Oct 2026), built around her flat at 13th & Walnut.
+A single-file interactive guide to Philadelphia for a seven-week Wharton exchange (21 Aug – 11 Oct 2026), built around a base at 13th & Walnut, Center City. Opinionated, personal, and honest about what to skip.
 
 Open `index.html` in any browser (or the private artifact link). Fonts are inlined; the map is a real Leaflet basemap (CARTO Positron light / Dark Matter dark tiles, OpenStreetMap data) with neighbourhood polygons and pins overlaid. Offline, or anywhere that blocks outside hosts (the claude.ai artifact sandbox), it falls back to a hand-drawn schematic SVG map of the same data (projected from lat/lon and rotated ~9° so the grid runs square).
 
@@ -23,10 +23,10 @@ Everything editable lives in `src/data.js` (neighbourhoods, places, walks, calen
 {n:'Name', t:'eat|drink|cafe|shop|see|do', h:'<hood key>', at:[lat,lon] /* or 'N/Street' grid string */, addr:'…', tags:['you','hidden',…], p:1, price:'$$', d:'blurb', tip:'the move'}
 ```
 
-Most pins were geocoded from their street address via OpenStreetMap Nominatim (Aug 2026); the 14 places from Isabella's own Apple Maps guides carry Apple's exact coordinates. Grid strings (`'18/Locust'`, `'W38/Walnut'`) resolve through a calibrated model of the Center City / South Philly / West Philly grid for anything not geocoded.
+Most pins were geocoded from their street address via OpenStreetMap Nominatim (Aug 2026); a handful of places carry exact Apple Maps coordinates. Grid strings (`'18/Locust'`, `'W38/Walnut'`) resolve through a calibrated model of the Center City / South Philly / West Philly grid for anything not geocoded.
 
 Then `python3 build.py` to regenerate `index.html`. `src/fonts.css` is the base64 @font-face block (DM Serif Display, Geist, Geist Mono; all OFL).
 
 ## Sources
 
-Infatuation Philadelphia (best-restaurants Apr 2026, wine bars Jun 2026, cocktail bars Jul 2026), Resy and Philly Mag 2026 hit lists, the Inquirer's 2025 and 2026 closure lists, and the published 2026 Phillies / Eagles / Flyers / Union / Penn schedules, plus Isabella's own Apple Maps "Philly – Restaurants to try" / "Bars to try" guides. Places marked "check address" are 2026 openings whose exact address was not confirmed.
+Infatuation Philadelphia (best-restaurants Apr 2026, wine bars Jun 2026, cocktail bars Jul 2026), Resy and Philly Mag 2026 hit lists, the Inquirer's 2025 and 2026 closure lists, and the published 2026 Phillies / Eagles / Flyers / Union / Penn schedules. Places marked "check address" are 2026 openings whose exact address was not confirmed.

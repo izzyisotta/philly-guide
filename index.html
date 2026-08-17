@@ -261,7 +261,7 @@ svg.z2 .pin text{display:block}
 </style>
 
 <header class="top"><div class="top-in">
-  <div class="brand"><h1>Philly <em>on foot</em></h1><span class="sub">21 Aug – 11 Oct 2026 · from 1310 Walnut</span></div>
+  <div class="brand"><h1>Philly <em>on foot</em></h1><span class="sub">21 Aug – 11 Oct 2026 · from 13th &amp; Walnut</span></div>
   <nav class="tabs" role="tablist">
     <button data-v="map" class="on">Map</button>
     <button data-v="hoods">Neighbourhoods</button>
@@ -351,9 +351,9 @@ svg.z2 .pin text{display:block}
 <script>
 // ---------- Philadelphia guide data ----------
 // Coordinates: either explicit [lat, lon] or a grid string "N/Street" (numbered street / named street),
-// "W38/Walnut" for West Philly. Grid model calibrated on Isabella's own Apple Maps saves.
+// "W38/Walnut" for West Philly. Grid model calibrated on a handful of known Apple Maps coordinates.
 
-const HOME = { name: 'Home · 1310 Walnut St', ll: [39.9490, -75.1620] };
+const HOME = { name: 'Home · 13th & Walnut', ll: [39.9490, -75.1620] };
 const WHARTON = { name: 'Huntsman Hall (Wharton)', ll: [39.9532, -75.1983] };
 
 // named streets: latitude at Broad St
@@ -587,7 +587,7 @@ const PLACES = [
  {n:'Middle Child', t:'cafe', h:'wsw', at:[39.94718, -75.15948], addr:'248 S 11th St', tags:['famous','hidden'], p:1, price:'$', d:'The original tiny luncheonette (the Fishtown Clubhouse is the big sibling): the best sandwiches in Philadelphia and a genuinely funny menu. Six minutes from your flat. This becomes your Wharton lunch.', tip:'The Phoagie or the Shopsin\'s club. Expect a queue at 12:30; go 11:30 or 2.'},
  {n:'High Street Philly', t:'cafe', h:'wsw', at:[39.94891, -75.15557], addr:'101 S 9th St', tags:['you','hidden'], p:1, price:'$$', d:'Ellen Yin\'s bakery-cafe (breakfast/lunch) that turns into a serious restaurant at night. Some of the best bread and pastry in the city; the sandwiches and grain bowls at lunch are exactly the London-cafe register you like.', tip:'Kouign-amann. Sit at the counter for dinner.'},
  {n:'Cheu Noodle Bar', t:'eat', h:'wsw', at:[39.94676, -75.15756], addr:'255 S 10th St', tags:['hidden'], p:3, price:'$', d:'Ben Puchowski\'s brisket ramen and matzo-ball ramen: the small original room. Cheap, quick, 5 min away.', tip:'Check it is open; the team has shuffled locations. Cheu Fishtown is the certain one.'},
- {n:'McGillin\'s Olde Ale House', t:'drink', h:'wsw', at:[39.9502, -75.16258], addr:'1310 Drury St', tags:['classic','famous'], p:2, price:'$', d:'Opened 1860, oldest continuously operating tavern in Philadelphia, hidden down an alley directly behind your building. Loud, touristy, essential once, and useful as "the pub near mine" for the section.', tip:'Weeknight early evening. Quizzo on Wednesdays.'},
+ {n:'McGillin\'s Olde Ale House', t:'drink', h:'wsw', at:[39.9502, -75.16258], addr:'1310 Drury St', tags:['classic','famous'], p:2, price:'$', d:'Opened 1860, oldest continuously operating tavern in Philadelphia, hidden down an alley off 13th between Walnut and Chestnut, a minute from your door. Loud, touristy, essential once, and useful as "the pub near mine" for the section.', tip:'Weeknight early evening. Quizzo on Wednesdays.'},
  {n:'Dirty Frank\'s', t:'drink', h:'wsw', at:[39.94543, -75.1628], addr:'347 S 13th St', tags:['dive','classic'], p:2, price:'$', d:'The Philly dive: no sign (a mural of famous Franks on the outside instead), cash bar, cheap beer, artists, nurses, students, since 1933. 4 min from you.', tip:'Cash. Ask for the Citywide (a can of PBR + a shot).'},
  {n:'Fergie\'s Pub', t:'drink', h:'wsw', at:[39.94961, -75.16116], addr:'1214 Sansom St', tags:['classic'], p:3, price:'$', d:'Irish pub two blocks up, folk sessions, quizzo, an actual community. Local option for a Tuesday.', tip:''},
  {n:'Time', t:'drink', h:'wsw', at:[39.95005, -75.16264], addr:'1315 Sansom St', tags:['hidden'], p:3, price:'$$', d:'Whiskey bar with live jazz most nights and no cover, on your own block. Nobody recommends it to visitors, which is the point.', tip:'Late, after dinner, alone with a book is fine here.'},
@@ -1077,7 +1077,7 @@ const MUSIC = {
 
 // ---------- Getting around & practical ----------
 const PRACTICAL = [
- {h:'The grid', t:'Numbered streets run north-south (Front/1st on the Delaware to 60s in West Philly; Broad = 14th). Named streets run east-west; south of Market they go Chestnut, Walnut, Locust, Spruce, Pine, Lombard, South. Addresses tell you the block: 1310 Walnut = between 13th and 14th. You will not get lost.'},
+ {h:'The grid', t:'Numbered streets run north-south (Front/1st on the Delaware to 60s in West Philly; Broad = 14th). Named streets run east-west; south of Market they go Chestnut, Walnut, Locust, Spruce, Pine, Lombard, South. Addresses tell you the block: 1421 Sansom = between 14th and 15th. You will not get lost.'},
  {h:'Broad Street Line (orange)', t:'Your subway. Walnut-Locust station is 2 min from the flat. South to Tasker-Morris (East Passyunk), Snyder, NRG (stadiums, 12 min); north to Spring Garden, Girard, Temple.'},
  {h:'Market-Frankford Line (blue, "the El")', t:'From 13th St (Market) west to 30th St, 34th, 40th (Penn) or east/north to 2nd St (Old City), Spring Garden, Girard (Fishtown), Berks, York-Dauphin (Kensington). SEPTA Key card or tap a contactless card, $2.50.'},
  {h:'Walking to Wharton', t:'13th & Walnut to Huntsman Hall is 2.1 miles / 40 min on foot along Walnut, over the bridge. Or El from 13th to 34th (12 min) or the 21/42 bus along Walnut/Chestnut. Indego bike share (docks everywhere) is 15 min.'},
